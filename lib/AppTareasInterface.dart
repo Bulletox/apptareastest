@@ -11,8 +11,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color(0xFFFFA726), // Naranja Medio
-        accentColor: Color(0xFFFFD180), // Naranja Claro
+        primaryColor: Color.fromARGB(255, 235, 221, 249), // Naranja Medio
+        accentColor: Color.fromARGB(255, 209, 163, 255), // Naranja Claro
       ),
       home: TaskList(),
     );
@@ -55,14 +55,14 @@ class _TaskListState extends State<TaskList> {
             color: Theme.of(context).primaryColor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
-              side: BorderSide(color: Colors.deepOrange),
+              side: BorderSide(color: Color.fromARGB(255, 209, 163, 255)),
             ),
             margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: ListTile(
               title: Text(
                 tasks[index].name,
                 style: TextStyle(
-                  color: tasks[index].isCompleted ? Colors.green : Colors.white,
+                  color: tasks[index].isCompleted ? Colors.green : Color.fromARGB(255, 60, 28, 116),fontWeight: FontWeight.bold,
                   decoration: tasks[index].isCompleted
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
@@ -73,15 +73,15 @@ class _TaskListState extends State<TaskList> {
                 children: [
                   Text(
                     tasks[index].description,
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
                   ),
                   Text(
                     'Fecha de entrega: ${_formatDate(tasks[index].dueDate)}',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
                   ),
                   Text(
                     'Días restantes: ${_calculateDaysRemaining(tasks[index].dueDate)}',
-                    style: TextStyle(color: Colors.white70),
+                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
                   ),
                 ],
               ),
@@ -102,7 +102,7 @@ class _TaskListState extends State<TaskList> {
                     },
                   ),
                   IconButton(
-                    icon: Icon(Icons.delete, color: Colors.deepOrange),
+                    icon: Icon(Icons.delete, color: const Color(0xFFCE93D8)),
                     onPressed: () {
                       _removeTask(index);
                     },
@@ -211,7 +211,7 @@ class _TaskListState extends State<TaskList> {
                             _selectedDate != null
                                 ? _formatDate(_selectedDate!)
                                 : 'Seleccione la fecha',
-                            style: const TextStyle(color: Colors.black87),
+                            style: const TextStyle(color: Color.fromARGB(255, 60, 28, 116), fontWeight: FontWeight.bold),
                           ),
                           const Icon(Icons.calendar_today, color: Colors.black87),
                         ],
