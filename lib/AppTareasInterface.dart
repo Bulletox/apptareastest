@@ -37,109 +37,62 @@ class TaskList extends StatefulWidget {
 
 class _TaskListState extends State<TaskList> {
   List<Task> tasks = [];
-  TextEditingController _taskNameController = TextEditingController();
-  TextEditingController _taskDescriptionController = TextEditingController();
-  TextEditingController _dueDateController = TextEditingController();
   DateTime? _selectedDate;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Tareas'),
+        title: Text(
+          'Lista de Tareas',
+          style: TextStyle(
+            fontFamily: 'SanFrancisco',
+          ),
+        ),
       ),
       body: ListView.builder(
         itemCount: tasks.length,
         itemBuilder: (context, index) {
-          return Card(
-            color: Theme.of(context).primaryColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              side: BorderSide(color: Color.fromARGB(255, 209, 163, 255)),
-            ),
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: ListTile(
-              title: Text(
-                tasks[index].name,
-                style: TextStyle(
-                  color: tasks[index].isCompleted ? Colors.green : Color.fromARGB(255, 60, 28, 116),fontWeight: FontWeight.bold,
-                  decoration: tasks[index].isCompleted
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                ),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tasks[index].description,
-                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
-                  ),
-                  Text(
-                    'Fecha de entrega: ${_formatDate(tasks[index].dueDate)}',
-                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
-                  ),
-                  Text(
-                    'Días restantes: ${_calculateDaysRemaining(tasks[index].dueDate)}',
-                    style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
-                  ),
-                ],
-              ),
-              onTap: () {
-                _showTaskDescription(
-                  tasks[index].name,
-                  tasks[index].description,
-                  _formatDate(tasks[index].dueDate),
-                );
-              },
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.check, color: Colors.green),
-                    onPressed: () {
-                      _completeTask(index);
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: const Color(0xFFCE93D8)),
-                    onPressed: () {
-                      _removeTask(index);
-                    },
-                  ),
-                ],
-              ),
-            ),
+          return TaskItemWidget(
+            task: tasks[index],
+            onTap: () => _showTaskDescription(tasks[index]),
+            onComplete: () => _completeTask(index),
+            onDelete: () => _removeTask(index),
           );
         },
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _addTask();
-        },
+        onPressed: _addTask,
         child: Icon(Icons.add),
+        shape: CircleBorder(),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        color: Colors.blue,
+        child: IconTheme(
+          data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              IconButton(
+                tooltip: 'Buscar',
+                icon: const Icon(Icons.search),
+                onPressed: () {},
+              ),
+              IconButton(
+                tooltip: 'Favorito',
+                icon: const Icon(Icons.favorite),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-
-    if (pickedDate != null && pickedDate != _selectedDate) {
-      setState(() {
-        _selectedDate = pickedDate;
-        _dueDateController.text = _formatDate(_selectedDate!);
-      });
-    }
-  }
-
-  void _addTaskToList(
-      String taskName, String taskDescription, DateTime dueDate) {
+  void _addTaskToList(String taskName, String taskDescription, DateTime dueDate) {
     setState(() {
       tasks.add(Task(taskName, taskDescription, dueDate));
       tasks.sort((a, b) => a.dueDate.compareTo(b.dueDate));
@@ -156,148 +109,95 @@ class _TaskListState extends State<TaskList> {
     setState(() {
       tasks[index].isCompleted = true;
     });
-    _showTaskDescription(
-      tasks[index].name,
-      tasks[index].description,
-      _formatDate(tasks[index].dueDate),
-    );
+    _showTaskDescription(tasks[index]);
   }
 
   void _addTask() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text('Nueva Tarea'),
-              content: Column(
-                children: [
-                  TextField(
-                    controller: _taskNameController,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                        labelText: 'Nombre de la tarea'),
-                  ),
-                  TextField(
-                    controller: _taskDescriptionController,
-                    decoration: const InputDecoration(
-                        labelText: 'Descripción de la tarea'),
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2101),
-                      );
-
-                      if (pickedDate != null) {
-                        setState(() {
-                          _selectedDate = pickedDate;
-                          _dueDateController.text = _formatDate(_selectedDate!);
-                        });
-                      }
-                    },
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Fecha de entrega',
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            _selectedDate != null
-                                ? _formatDate(_selectedDate!)
-                                : 'Seleccione la fecha',
-                            style: const TextStyle(color: Color.fromARGB(255, 60, 28, 116), fontWeight: FontWeight.bold),
-                          ),
-                          const Icon(Icons.calendar_today, color: Colors.black87),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancelar'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _addTaskToList(
-                      _taskNameController.text,
-                      _taskDescriptionController.text,
-                      _selectedDate ?? DateTime.now(),
-                    );
-                    _taskNameController.clear();
-                    _taskDescriptionController.clear();
-                    _dueDateController.clear();
-                    _selectedDate = null;
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFCE93D8),
-                  ),
-                  child: const Text('Guardar Tarea'),
-                ),
-              ],
-            );
-          },
+        return AddTaskDialog(
+          onAddTask: _addTaskToList,
         );
       },
     );
   }
 
-  void _showTaskDescription(
-      String taskName, String taskDescription, String dueDate) {
+  void _showTaskDescription(Task task) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    taskName,
-                    style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Descripción: $taskDescription'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Fecha de entrega: $dueDate'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Cerrar'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        return TaskDescriptionDialog(task: task);
       },
+    );
+  }
+}
+
+class TaskItemWidget extends StatelessWidget {
+  final Task task;
+  final VoidCallback onTap;
+  final VoidCallback onComplete;
+  final VoidCallback onDelete;
+
+  const TaskItemWidget({
+    required this.task,
+    required this.onTap,
+    required this.onComplete,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 5.0,
+      color: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+        side: BorderSide(color: Color.fromARGB(255, 209, 163, 255)),
+      ),
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: ListTile(
+        title: Text(
+          task.name,
+          style: TextStyle(
+            color: task.isCompleted ? Colors.green : Color.fromARGB(255, 60, 28, 116),
+            fontWeight: FontWeight.bold,
+            fontFamily: 'San Francisco',
+            decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+          ),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              task.description,
+              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+            ),
+            Text(
+              'Fecha de entrega: ${_formatDate(task.dueDate)}',
+              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+            ),
+            Text(
+              'Días restantes: ${_calculateDaysRemaining(task.dueDate)}',
+              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+            ),
+          ],
+        ),
+        onTap: onTap,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.check, color: Colors.green),
+              onPressed: onComplete,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete, color: const Color(0xFFCE93D8)),
+              onPressed: onDelete,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -309,5 +209,187 @@ class _TaskListState extends State<TaskList> {
     final now = DateTime.now();
     final difference = dueDate.difference(now).inDays;
     return difference;
+  }
+}
+
+class AddTaskDialog extends StatefulWidget {
+  final Function(String, String, DateTime) onAddTask;
+
+  const AddTaskDialog({required this.onAddTask});
+
+  @override
+  _AddTaskDialogState createState() => _AddTaskDialogState();
+}
+
+class _AddTaskDialogState extends State<AddTaskDialog> {
+  TextEditingController _taskNameController = TextEditingController();
+  TextEditingController _taskDescriptionController = TextEditingController();
+  DateTime? _selectedDate;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Nueva Tarea'),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _taskNameController,
+                autofocus: true,
+                decoration: const InputDecoration(labelText: 'Nombre de la tarea'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Por favor ingrese un nombre de tarea';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _taskDescriptionController,
+                decoration: const InputDecoration(labelText: 'Descripción de la tarea'),
+              ),
+              DateInputWidget(
+                selectedDate: _selectedDate,
+                onSelectDate: (date) {
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: const Text('Cancelar'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              widget.onAddTask(
+                _taskNameController.text,
+                _taskDescriptionController.text,
+                _selectedDate ?? DateTime.now(),
+              );
+              _taskNameController.clear();
+              _taskDescriptionController.clear();
+              Navigator.of(context).pop();
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFCE93D8),
+          ),
+          child: const Text('Guardar Tarea'),
+        ),
+      ],
+    );
+  }
+}
+
+
+class TaskDescriptionDialog extends StatelessWidget {
+  final Task task;
+
+  const TaskDescriptionDialog({required this.task});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                task.name,
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('Descripción: ${task.description}'),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('Fecha de entrega: ${_formatDate(task.dueDate)}'),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cerrar'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+}
+
+class DateInputWidget extends StatelessWidget {
+  final DateTime? selectedDate;
+  final ValueChanged<DateTime?> onSelectDate;
+
+  const DateInputWidget({
+    required this.selectedDate,
+    required this.onSelectDate,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: selectedDate ?? DateTime.now(),
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2101),
+        );
+
+        if (pickedDate != null) {
+          onSelectDate(pickedDate);
+        }
+      },
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Fecha de entrega',
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Text(
+              selectedDate != null ? _formatDate(selectedDate!) : 'Seleccione la fecha',
+              style: const TextStyle(color: Color.fromARGB(255, 60, 28, 116), fontWeight: FontWeight.bold),
+            ),
+            const Icon(Icons.calendar_today, color: Colors.black87),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
   }
 }

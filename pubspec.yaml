@@ -31,10 +31,16 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Otros paquetes o dependencias necesarias para tu proyecto
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  # La siguiente línea agrega los iconos de Cupertino para usar en iOS.
   cupertino_icons: ^1.0.2
+
+# Definición de las fuentes de tu aplicación
+fonts:
+  - family: SanFrancisco
+    fonts:
+      - asset: asset/fonts/SFUIDisplay-Bold.ttf
 
 dev_dependencies:
   flutter_test:
