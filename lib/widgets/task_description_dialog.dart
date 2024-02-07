@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'task.dart';
+import '../models/task.dart';
 
 class TaskDescriptionDialog extends StatelessWidget {
   final Task task;

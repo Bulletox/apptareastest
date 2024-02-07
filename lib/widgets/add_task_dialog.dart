@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'task.dart';
+import '../models/task.dart';
 import 'date_input_widget.dart';
 
 class AddTaskDialog extends StatefulWidget {
