@@ -11,7 +11,8 @@ class AddTaskDialog extends StatefulWidget {
   _AddTaskDialogState createState() => _AddTaskDialogState();
 }
 
-class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProviderStateMixin {
+class _AddTaskDialogState extends State<AddTaskDialog>
+    with SingleTickerProviderStateMixin {
   TextEditingController _taskNameController = TextEditingController();
   TextEditingController _taskDescriptionController = TextEditingController();
   DateTime? _selectedDate;
@@ -50,7 +51,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProvider
     _paddingAnimation = EdgeInsetsTween(
       begin: EdgeInsets.zero,
       end: EdgeInsets.only(
-        bottom: mediaQuery.viewInsets.bottom + 20, // Ajuste según la altura del teclado
+        bottom: mediaQuery.viewInsets.bottom +
+            20, // Ajuste según la altura del teclado
       ),
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -64,7 +66,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProvider
           padding: _paddingAnimation.value,
           duration: Duration(milliseconds: 300),
           child: AlertDialog(
-            title: const Text('Nueva Tarea'),
+            backgroundColor: Color.fromARGB(255,231, 246, 242), // Cambia el color de fondo aquí
             content: SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -74,7 +76,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProvider
                     TextFormField(
                       controller: _taskNameController,
                       autofocus: true,
-                      decoration: const InputDecoration(labelText: 'Nombre de la tarea'),
+                      decoration: const InputDecoration(
+                          labelText: 'Nombre de la tarea'),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingrese un nombre de tarea';
@@ -84,7 +87,8 @@ class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProvider
                     ),
                     TextFormField(
                       controller: _taskDescriptionController,
-                      decoration: const InputDecoration(labelText: 'Descripción de la tarea'),
+                      decoration: const InputDecoration(
+                          labelText: 'Descripción de la tarea'),
                     ),
                     DateInputWidget(
                       selectedDate: _selectedDate,
@@ -119,7 +123,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> with SingleTickerProvider
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFCE93D8),
+                  backgroundColor: Color.fromARGB(255,165, 201, 202),
                 ),
                 child: const Text('Guardar Tarea'),
               ),

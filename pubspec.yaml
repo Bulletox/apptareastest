@@ -40,7 +40,7 @@ dependencies:
 fonts:
   - family: SanFrancisco
     fonts:
-      - asset: asset/fonts/SFUIDisplay-Bold.ttf
+      - asset: ./lib/asset/fonts/SFUIDisplay-Bold.ttf
 
 dev_dependencies:
   flutter_test:

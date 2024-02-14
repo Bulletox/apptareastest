@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'widgets/task_list.dart';
+import 'screens/task_list.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,8 +12,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 235, 221, 249), // Naranja Medio
-        accentColor: Color.fromARGB(255, 209, 163, 255), // Naranja Claro
+        primaryColor: Color.fromARGB(255,165, 201, 202),  
+        accentColor: Color.fromARGB(255,44, 51, 51), 
       ),
       home: TaskList(),
     );

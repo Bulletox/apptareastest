@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/task.dart';
 import 'date_input_widget.dart';
 
-class TaskItemWidget extends StatelessWidget {
+class TaskItemWidget extends StatefulWidget {
   final Task task;
   final VoidCallback onTap;
   final VoidCallback onComplete;
@@ -16,53 +16,72 @@ class TaskItemWidget extends StatelessWidget {
   });
 
   @override
+  _TaskItemWidgetState createState() => _TaskItemWidgetState();
+}
+
+class _TaskItemWidgetState extends State<TaskItemWidget> {
+  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 5.0,
       color: Theme.of(context).primaryColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-        side: BorderSide(color: Color.fromARGB(255, 209, 163, 255)),
+        borderRadius:
+            BorderRadius.circular(15.0), // Cambia el radio de la esquina aquí
+        side: BorderSide(
+          color: Color.fromARGB(255, 57, 91, 100),
+          width: 1.0, // Cambia el ancho del borde aquí
+        ),
       ),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
         title: Text(
-          task.name,
+          widget.task.name,
           style: TextStyle(
-            color: task.isCompleted ? Colors.green : Color.fromARGB(255, 60, 28, 116),
+            color: widget.task.isCompleted
+                ? Colors.green
+                : Color.fromARGB(255,44, 51, 51),
             fontWeight: FontWeight.bold,
-            fontFamily: 'San Francisco',
-            decoration: task.isCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+            fontFamily: 'SanFrancisco',
+            decoration: widget.task.isCompleted
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
           ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              task.description,
-              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+              widget.task.description,
+              style: TextStyle(color: Color.fromARGB(255, 231, 246, 242)),
             ),
             Text(
-              'Fecha de entrega: ${_formatDate(task.dueDate)}',
-              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+              'Fecha de entrega: ${_formatDate(widget.task.dueDate)}',
+              style: TextStyle(color: Color.fromARGB(255, 231, 246, 242)),
             ),
             Text(
-              'Días restantes: ${_calculateDaysRemaining(task.dueDate)}',
-              style: TextStyle(color: Color.fromARGB(255, 60, 28, 116)),
+              'Días restantes: ${_calculateDaysRemaining(widget.task.dueDate)}',
+              style: TextStyle(color: Color.fromARGB(255, 231, 246, 242)),
             ),
           ],
         ),
-        onTap: onTap,
+        onTap: widget.onTap,
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: Icon(Icons.check, color: Colors.green),
-              onPressed: onComplete,
+            Checkbox(
+              value: widget.task.isCompleted,
+              onChanged: (value) {
+                setState(() {
+                  widget.task.isCompleted = value!;
+                });
+                widget.onComplete();
+              },
+              activeColor: Colors.green,
             ),
             IconButton(
-              icon: Icon(Icons.delete, color: const Color(0xFFCE93D8)),
-              onPressed: onDelete,
+              icon: Icon(Icons.delete, color: Color.fromARGB(255,44, 51, 51)),
+              onPressed: widget.onDelete,
             ),
           ],
         ),

@@ -18,6 +18,21 @@ class DateInputWidget extends StatelessWidget {
           initialDate: selectedDate ?? DateTime.now(),
           firstDate: DateTime.now(),
           lastDate: DateTime(2101),
+          builder: (BuildContext context, Widget? child) {
+            return Theme(
+              data: ThemeData.light().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.blue, // Cambia el color del calendario aquí
+                  onPrimary: Colors.white, // Cambia el color del texto del calendario aquí
+                ),
+                textTheme: TextTheme(
+                  bodyText1: TextStyle(color: Colors.black), // Cambia el color del texto del botón de fecha aquí
+                ),
+                // Ajusta otros estilos según sea necesario
+              ),
+              child: child!,
+            );
+          },
         );
 
         if (pickedDate != null) {
@@ -34,7 +49,7 @@ class DateInputWidget extends StatelessWidget {
             if (selectedDate != null)
               Text(
                 _formatDate(selectedDate!),
-                style: const TextStyle(color: Color.fromARGB(255, 60, 28, 116), fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Color.fromARGB(255,44, 51, 51), fontWeight: FontWeight.bold),
               )
             else
               const Text(
