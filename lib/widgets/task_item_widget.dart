@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import '../models/task.dart';
 import 'date_input_widget.dart';
 
+/// Widget que representa un elemento de tarea en la lista de tareas.
+/// 
+/// Este widget muestra la información de una tarea, incluyendo su nombre, descripción,
+/// fecha de entrega y días restantes. También permite marcar la tarea como completada
+/// y eliminarla de la lista.
 class TaskItemWidget extends StatefulWidget {
   final Task task;
   final VoidCallback onTap;

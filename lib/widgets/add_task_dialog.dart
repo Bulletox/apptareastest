@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 import '../models/task.dart';
 import 'date_input_widget.dart';
 
+/// A dialog widget for adding a task.
+///
+/// This widget displays a dialog with input fields for the task name, task description,
+/// and a date picker. It also provides buttons for canceling the dialog and saving the task.
+///
+/// The [onAddTask] callback is called when the user saves the task, and it receives
+/// the task name, task description, and selected date as parameters.
 class AddTaskDialog extends StatefulWidget {
   final Function(String, String, DateTime) onAddTask;
 
@@ -11,6 +18,10 @@ class AddTaskDialog extends StatefulWidget {
   _AddTaskDialogState createState() => _AddTaskDialogState();
 }
 
+/// The state class for the [AddTaskDialog] widget.
+///
+/// This class manages the state of the dialog, including the text editing controllers,
+/// the selected date, and the animation for the dialog's padding.
 class _AddTaskDialogState extends State<AddTaskDialog>
     with SingleTickerProviderStateMixin {
   TextEditingController _taskNameController = TextEditingController();
